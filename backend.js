@@ -1,6 +1,7 @@
 var express = require('express');
 var busboyBodyParser = require('busboy-body-parser');
 var app = express();
+var request = require('request');
 
 app.use(busboyBodyParser());
 
@@ -63,10 +64,18 @@ app.post('/addMovie', function (req, res) {
     });
 });
 
+app.get("/", function (req,res){
+    request("http://www.omdbapi.com/?s=florida&apikey=thewdb", function(error,response,body){
+        if(!error && response.statusCode == 200) {
+            var data = JSON.parse(body);
+            res.render("home", {data:data});
+        }
+    })
+});
+
 app.get('*', function (req, res) {
     res.send("Sorry, page not found!");
 });
 
 var port = 8080;
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
